@@ -175,13 +175,15 @@ let saveDebounceTimer = null;
 // ─── Inventory Persistence ────────────────────────────────────────────────────
 
 async function saveInventory() {
-  const { data: { session } } = await sb.auth.getSession();
+  const { data: { session }, error: sessionError } = await sb.auth.getSession();
+  console.log('[save] session:', session?.user?.id ?? 'none', sessionError ?? '');
   if (!session?.user) return;
   const { error } = await sb.from('rune_stash').upsert(
     { user_id: session.user.id, inventory: { ...inventory }, updated_at: new Date().toISOString() },
     { onConflict: 'user_id' }
   );
-  if (error) console.error('Save failed:', error.message);
+  if (error) console.error('[save] failed:', error.message, error);
+  else console.log('[save] success');
 }
 
 async function loadInventory(userId) {

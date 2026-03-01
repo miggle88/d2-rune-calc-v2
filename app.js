@@ -65,14 +65,22 @@ function initAuth() {
     await sb.auth.signOut();
   });
 
-  sb.auth.onAuthStateChange((event, session) => {
+  sb.auth.onAuthStateChange(async (event, session) => {
     if (session?.user) {
       overlay.classList.add('hidden');
       userEmailEl.textContent = session.user.email;
+      await loadInventory(session.user.id);
+      renderRuneGrid();
+      renderRunewordsPanel();
+      renderUpgradesPanel();
     } else {
       overlay.classList.remove('hidden');
       userEmailEl.textContent = '';
       passEl.value = '';
+      for (const id of Object.keys(inventory)) inventory[id] = 0;
+      renderRuneGrid();
+      renderRunewordsPanel();
+      renderUpgradesPanel();
     }
   });
 }
@@ -164,22 +172,28 @@ let activeFilter = 'all';
 let activeSlotFilter = 'all';
 let saveDebounceTimer = null;
 
-// ─── LocalStorage ─────────────────────────────────────────────────────────────
+// ─── Inventory Persistence ────────────────────────────────────────────────────
 
-function saveInventory() {
-  localStorage.setItem('d2-rune-inventory', JSON.stringify(inventory));
+async function saveInventory() {
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) return;
+  await sb.from('rune_stash').upsert({
+    user_id: user.id,
+    inventory: { ...inventory },
+    updated_at: new Date().toISOString(),
+  });
 }
 
-function loadInventory() {
-  const saved = localStorage.getItem('d2-rune-inventory');
-  if (!saved) return;
-  try {
-    const parsed = JSON.parse(saved);
+async function loadInventory(userId) {
+  for (const id of Object.keys(inventory)) inventory[id] = 0;
+  const { data } = await sb.from('rune_stash')
+    .select('inventory')
+    .eq('user_id', userId)
+    .single();
+  if (data?.inventory) {
     for (const id of Object.keys(inventory)) {
-      if (typeof parsed[id] === 'number') inventory[id] = parsed[id];
+      if (typeof data.inventory[id] === 'number') inventory[id] = data.inventory[id];
     }
-  } catch (e) {
-    // ignore corrupt data
   }
 }
 
@@ -387,7 +401,6 @@ function initSlotFilter() {
 
 document.addEventListener('DOMContentLoaded', () => {
   initAuth();
-  loadInventory();
   renderRuneGrid();
   renderRunewordsPanel();
   renderUpgradesPanel();

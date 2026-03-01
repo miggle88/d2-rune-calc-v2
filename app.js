@@ -1,5 +1,82 @@
 'use strict';
 
+// ─── Supabase ─────────────────────────────────────────────────────────────────
+
+const { createClient } = window.supabase;
+const sb = createClient(
+  'https://piaijwyorebylqvoniyf.supabase.co',
+  'sb_publishable_MuLfZ_LO7426dGi_boqyXQ_D5JJv2B1'
+);
+
+// ─── Auth UI ──────────────────────────────────────────────────────────────────
+
+function initAuth() {
+  const overlay   = document.getElementById('auth-overlay');
+  const form      = document.getElementById('auth-form');
+  const emailEl   = document.getElementById('auth-email');
+  const passEl    = document.getElementById('auth-password');
+  const submitBtn = document.getElementById('auth-submit');
+  const errorEl   = document.getElementById('auth-error');
+  const tabs      = document.querySelectorAll('.auth-tab');
+  const logoutBtn = document.getElementById('logout-btn');
+  const userEmailEl = document.getElementById('user-email');
+
+  let mode = 'signin';
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      mode = tab.dataset.tab;
+      submitBtn.textContent = mode === 'signin' ? 'Sign In' : 'Sign Up';
+      errorEl.textContent = '';
+    });
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorEl.textContent = '';
+    submitBtn.disabled = true;
+
+    const email    = emailEl.value.trim();
+    const password = passEl.value;
+
+    let error;
+    if (mode === 'signup') {
+      ({ error } = await sb.auth.signUp({ email, password }));
+      if (!error) {
+        errorEl.style.color = '#5a9a5a';
+        errorEl.textContent = 'Check your email to confirm your account.';
+        submitBtn.disabled = false;
+        return;
+      }
+    } else {
+      ({ error } = await sb.auth.signInWithPassword({ email, password }));
+    }
+
+    submitBtn.disabled = false;
+    if (error) {
+      errorEl.style.color = '#884444';
+      errorEl.textContent = error.message;
+    }
+  });
+
+  logoutBtn.addEventListener('click', async () => {
+    await sb.auth.signOut();
+  });
+
+  sb.auth.onAuthStateChange((event, session) => {
+    if (session?.user) {
+      overlay.classList.add('hidden');
+      userEmailEl.textContent = session.user.email;
+    } else {
+      overlay.classList.remove('hidden');
+      userEmailEl.textContent = '';
+      passEl.value = '';
+    }
+  });
+}
+
 // ─── Rune Data ───────────────────────────────────────────────────────────────
 
 const RUNES = [
@@ -309,6 +386,7 @@ function initSlotFilter() {
 // ─── Init ─────────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
+  initAuth();
   loadInventory();
   renderRuneGrid();
   renderRunewordsPanel();

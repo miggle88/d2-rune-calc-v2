@@ -1,0 +1,441 @@
+:root {
+  --bg-primary:    #0a0a0a;
+  --bg-secondary:  #111108;
+  --bg-cell:       #1e1812;
+  --bg-cell-hover: #2a2016;
+  --border-stone:  #4a3f2f;
+  --border-gold:   #8b6914;
+  --text-primary:  #d4b483;
+  --text-gold:     #c8961e;
+  --text-white:    #e8e0d0;
+  --text-dim:      #6b5a3e;
+  --glow-green:    rgba(0, 180, 0, 0.35);
+  --glow-yellow:   rgba(200, 200, 0, 0.35);
+  --font-gothic:   'Cinzel', serif;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-gothic);
+  min-height: 100vh;
+  padding: 24px 16px 48px;
+}
+
+#app {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ─── Header ─────────────────────────────────────────────── */
+#main-header {
+  text-align: center;
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-stone);
+}
+
+#main-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-gold);
+  text-shadow: 0 0 20px rgba(200, 150, 30, 0.5), 0 2px 4px rgba(0,0,0,0.8);
+  letter-spacing: 0.08em;
+}
+
+.subtitle {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-top: 6px;
+}
+
+/* ─── Section Titles ─────────────────────────────────────── */
+.section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-gold);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border-stone);
+}
+
+/* ─── Rune Grid Section ───────────────────────────────────── */
+#rune-grid-section {
+  margin-bottom: 32px;
+}
+
+#rune-grid {
+  display: grid;
+  grid-template-columns: repeat(9, 80px);
+  gap: 6px;
+  justify-content: center;
+}
+
+/* ─── Rune Cell ───────────────────────────────────────────── */
+.rune-cell {
+  width: 80px;
+  height: 80px;
+  background: var(--bg-cell);
+  border: 2px solid var(--border-stone);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 -2px 5px rgba(0, 0, 0, 0.7),
+    2px 3px 8px rgba(0, 0, 0, 0.7);
+  clip-path: polygon(12% 0%, 88% 0%, 100% 8%, 100% 100%, 0% 100%, 0% 8%);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.rune-cell:hover {
+  background: var(--bg-cell-hover);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -2px 5px rgba(0, 0, 0, 0.5),
+    2px 3px 12px rgba(0, 0, 0, 0.8),
+    0 0 10px rgba(200, 150, 30, 0.25);
+}
+
+.rune-cell.has-runes {
+  border-color: #6b5220;
+}
+
+.rune-glyph {
+  font-size: 26px;
+  color: var(--text-primary);
+  text-shadow: 0 0 10px rgba(200, 150, 30, 0.45);
+  user-select: none;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+
+.rune-name {
+  font-size: 8px;
+  color: var(--text-gold);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.rune-qty-wrap {
+  position: absolute;
+  bottom: 5px;
+  left: 6px;
+  display: flex;
+  align-items: center;
+}
+
+.rune-qty {
+  width: 36px;
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-family: var(--font-gothic);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 0;
+  cursor: text;
+  outline: none;
+  pointer-events: all;
+  -moz-appearance: textfield;
+}
+
+.rune-qty::-webkit-outer-spin-button,
+.rune-qty::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.rune-qty:focus {
+  color: #ffe080;
+}
+
+/* ─── Panels ─────────────────────────────────────────────── */
+#panels-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+/* ─── Runewords Panel ─────────────────────────────────────── */
+#runewords-panel,
+#upgrades-panel {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-stone);
+  border-radius: 2px;
+  padding: 16px;
+}
+
+#runeword-filters {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  background: #1a1208;
+  border: 1px solid var(--border-stone);
+  color: var(--text-dim);
+  font-family: var(--font-gothic);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 1px;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.filter-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--border-gold);
+}
+
+.filter-btn.active {
+  background: #2a1e08;
+  border-color: var(--border-gold);
+  color: var(--text-gold);
+}
+
+#runewords-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 520px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+#runewords-list::-webkit-scrollbar {
+  width: 4px;
+}
+#runewords-list::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+#runewords-list::-webkit-scrollbar-thumb {
+  background: var(--border-stone);
+  border-radius: 2px;
+}
+
+/* ─── Runeword Cards ──────────────────────────────────────── */
+.runeword-card {
+  border: 1px solid var(--border-stone);
+  border-radius: 2px;
+  padding: 10px 12px;
+  transition: box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.runeword-card.can-make {
+  background: #0b1a0b;
+  border-color: #1f6b1f;
+  box-shadow: 0 0 8px var(--glow-green), inset 0 0 6px rgba(0, 80, 0, 0.25);
+}
+
+.runeword-card.close {
+  background: #1a1a0a;
+  border-color: #5a5a15;
+  box-shadow: 0 0 8px var(--glow-yellow), inset 0 0 6px rgba(80, 80, 0, 0.2);
+}
+
+.runeword-card.cannot-make {
+  background: #0e0c08;
+  border-color: #2a2218;
+  opacity: 0.55;
+}
+
+.rw-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+
+.rw-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-gold);
+  letter-spacing: 0.05em;
+}
+
+.rw-meta {
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  text-align: right;
+}
+
+.rw-ladder {
+  color: #8b3a3a;
+  font-size: 0.58rem;
+  margin-left: 4px;
+}
+
+.rw-runes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.rune-badge {
+  display: inline-block;
+  background: #1a1408;
+  border: 1px solid var(--border-stone);
+  border-radius: 1px;
+  padding: 2px 6px;
+  font-size: 0.65rem;
+  color: var(--text-primary);
+  letter-spacing: 0.04em;
+}
+
+.rune-badge.missing {
+  border-color: #5a2020;
+  color: #884444;
+}
+
+.rune-badge.have {
+  border-color: #1f4f1f;
+  color: #5a9a5a;
+}
+
+/* ─── Upgrades Panel ──────────────────────────────────────── */
+.panel-note {
+  font-size: 0.62rem;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+  letter-spacing: 0.05em;
+}
+
+#upgrades-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-height: 520px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+#upgrades-list::-webkit-scrollbar {
+  width: 4px;
+}
+#upgrades-list::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+#upgrades-list::-webkit-scrollbar-thumb {
+  background: var(--border-stone);
+  border-radius: 2px;
+}
+
+.upgrade-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  border: 1px solid transparent;
+  border-radius: 1px;
+  font-size: 0.72rem;
+  transition: background 0.15s;
+}
+
+.upgrade-row.can-upgrade {
+  background: #0e1a0e;
+  border-color: #1f4f1f;
+}
+
+.upgrade-row.cannot-upgrade {
+  opacity: 0.45;
+}
+
+.upgrade-rune-from {
+  color: var(--text-primary);
+  min-width: 52px;
+}
+
+.upgrade-count {
+  color: var(--text-dim);
+  font-size: 0.68rem;
+}
+
+.upgrade-arrow {
+  color: var(--border-gold);
+  font-size: 0.8rem;
+}
+
+.upgrade-rune-to {
+  color: var(--text-gold);
+  min-width: 52px;
+}
+
+.upgrade-gem {
+  color: #6a4a8a;
+  font-size: 0.62rem;
+  margin-left: 2px;
+}
+
+.upgrade-times {
+  margin-left: auto;
+  font-size: 0.68rem;
+}
+
+.upgrade-times.positive {
+  color: #5a9a5a;
+  font-weight: 600;
+}
+
+.upgrade-times.zero {
+  color: var(--text-dim);
+}
+
+/* ─── Responsive ──────────────────────────────────────────── */
+@media (max-width: 860px) {
+  #rune-grid {
+    grid-template-columns: repeat(9, 60px);
+    gap: 4px;
+  }
+
+  .rune-cell {
+    width: 60px;
+    height: 60px;
+  }
+
+  .rune-glyph {
+    font-size: 20px;
+  }
+
+  .rune-name {
+    font-size: 6.5px;
+  }
+
+  .rune-qty {
+    font-size: 10px;
+    width: 28px;
+  }
+}
+
+@media (max-width: 700px) {
+  #panels-container {
+    grid-template-columns: 1fr;
+  }
+
+  #rune-grid {
+    grid-template-columns: repeat(6, 60px);
+  }
+
+  #main-header h1 {
+    font-size: 1.4rem;
+  }
+}

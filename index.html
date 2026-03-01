@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>D2 Rune Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <header id="main-header">
+      <h1>Diablo II Rune Calculator</h1>
+      <p class="subtitle">Horadric Cube &amp; Runeword Planner</p>
+    </header>
+
+    <section id="rune-grid-section">
+      <h2 class="section-title">Rune Stash</h2>
+      <div id="rune-grid"></div>
+    </section>
+
+    <div id="panels-container">
+      <section id="runewords-panel">
+        <h2 class="section-title">Runewords</h2>
+        <div id="runeword-filters">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="can-make">Can Make</button>
+          <button class="filter-btn" data-filter="close">Close</button>
+          <button class="filter-btn" data-filter="cannot-make">Cannot Make</button>
+        </div>
+        <div id="runewords-list"></div>
+      </section>
+
+      <section id="upgrades-panel">
+        <h2 class="section-title">Cube Upgrades</h2>
+        <p class="panel-note">&#10033; Pul and above require a Flawless Gem</p>
+        <div id="upgrades-list"></div>
+      </section>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

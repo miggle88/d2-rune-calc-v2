@@ -74,6 +74,10 @@ body {
   margin-bottom: 32px;
 }
 
+#rune-grid-section .section-title {
+  text-align: center;
+}
+
 #rune-grid {
   display: grid;
   grid-template-columns: repeat(9, 80px);

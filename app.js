@@ -532,22 +532,22 @@ function initFeedback() {
   });
 }
 
-async function loadAdminFeedback() {
-  const panel = document.getElementById('admin-panel');
-  const list  = document.getElementById('admin-feedback-list');
+let adminFeedbackData = [];
+let activeAdminFilter = 'all';
 
-  const { data, error } = await sb.from('feedback')
-    .select('*')
-    .order('created_at', { ascending: false });
+function renderAdminFeedback() {
+  const list = document.getElementById('admin-feedback-list');
+  const items = activeAdminFilter === 'all'
+    ? adminFeedbackData
+    : adminFeedbackData.filter(i => i.category === activeAdminFilter);
 
-  if (error || !data?.length) {
-    list.innerHTML = '<p class="admin-empty">No feedback yet.</p>';
-    panel.classList.remove('hidden');
+  if (!items.length) {
+    list.innerHTML = '<p class="admin-empty">No feedback found.</p>';
     return;
   }
 
   list.innerHTML = '';
-  for (const item of data) {
+  for (const item of items) {
     const date = new Date(item.created_at).toLocaleString();
     const card = document.createElement('div');
     card.className = 'admin-feedback-card';
@@ -557,7 +557,35 @@ async function loadAdminFeedback() {
     `;
     list.appendChild(card);
   }
-  panel.classList.remove('hidden');
+}
+
+function initAdminFilters() {
+  const btns = document.querySelectorAll('.admin-filter-btn');
+  btns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      btns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeAdminFilter = btn.dataset.category;
+      renderAdminFeedback();
+    });
+  });
+}
+
+async function loadAdminFeedback() {
+  const list = document.getElementById('admin-feedback-list');
+  list.innerHTML = '<p class="admin-empty">Loading...</p>';
+
+  const { data, error } = await sb.from('feedback')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    list.innerHTML = '<p class="admin-empty">Failed to load feedback.</p>';
+    return;
+  }
+
+  adminFeedbackData = data ?? [];
+  renderAdminFeedback();
 }
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
@@ -565,6 +593,7 @@ async function loadAdminFeedback() {
 document.addEventListener('DOMContentLoaded', () => {
   initAuth();
   initAdminNav();
+  initAdminFilters();
   initFeedback();
   renderRuneGrid();
   renderRunewordsPanel();

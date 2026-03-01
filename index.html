@@ -40,6 +40,10 @@
   <div id="app">
     <header id="main-header">
       <div id="header-top">
+        <nav id="admin-nav" class="hidden">
+          <button class="nav-btn active" data-view="stash">Stash</button>
+          <button class="nav-btn" data-view="feedback">Feedback Inbox</button>
+        </nav>
         <div id="user-status">
           <span id="user-email"></span>
           <button id="feedback-btn">Feedback</button>
@@ -50,34 +54,47 @@
       <p class="subtitle">Horadric Cube &amp; Runeword Planner</p>
     </header>
 
-    <section id="rune-grid-section">
-      <h2 class="section-title">Rune Stash</h2>
-      <div id="rune-grid"></div>
-    </section>
-
-    <div id="panels-container">
-      <section id="runewords-panel">
-        <h2 class="section-title">Runewords</h2>
-        <div id="runeword-filters">
-          <button class="filter-btn active" data-filter="all">All</button>
-          <button class="filter-btn" data-filter="can-make">Can Make</button>
-          <button class="filter-btn" data-filter="close">Close</button>
-        </div>
-        <div id="slot-filter-wrap">
-          <select id="slot-filter">
-            <option value="all">All Slot Types</option>
-          </select>
-        </div>
-        <div id="runewords-list"></div>
+    <!-- Stash View -->
+    <div id="view-stash">
+      <section id="rune-grid-section">
+        <h2 class="section-title">Rune Stash</h2>
+        <div id="rune-grid"></div>
       </section>
 
-      <section id="upgrades-panel">
-        <h2 class="section-title">Cube Upgrades</h2>
-        <p class="panel-note">&#10033; Pul and above require a Flawless Gem</p>
-        <div id="upgrades-list"></div>
+      <div id="panels-container">
+        <section id="runewords-panel">
+          <h2 class="section-title">Runewords</h2>
+          <div id="runeword-filters">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="can-make">Can Make</button>
+            <button class="filter-btn" data-filter="close">Close</button>
+          </div>
+          <div id="slot-filter-wrap">
+            <select id="slot-filter">
+              <option value="all">All Slot Types</option>
+            </select>
+          </div>
+          <div id="runewords-list"></div>
+        </section>
+
+        <section id="upgrades-panel">
+          <h2 class="section-title">Cube Upgrades</h2>
+          <p class="panel-note">&#10033; Pul and above require a Flawless Gem</p>
+          <div id="upgrades-list"></div>
+        </section>
+      </div>
+    </div>
+
+    <!-- Feedback Inbox View (admin only) -->
+    <div id="view-feedback" class="hidden">
+      <section id="admin-panel">
+        <h2 class="section-title">Feedback Inbox</h2>
+        <div id="admin-feedback-list"></div>
       </section>
     </div>
+
   </div>
+
   <div id="save-toast">Stash Saved</div>
 
   <!-- Feedback Modal -->
@@ -97,12 +114,6 @@
       </form>
       <p id="feedback-error"></p>
     </div>
-  </div>
-
-  <!-- Admin Feedback Panel -->
-  <div id="admin-panel" class="hidden">
-    <h2 class="section-title">Feedback Inbox</h2>
-    <div id="admin-feedback-list"></div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

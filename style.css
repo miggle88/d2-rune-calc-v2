@@ -1,3 +1,5 @@
+.hidden { display: none !important; }
+
 :root {
   --bg-primary:    #0a0a0a;
   --bg-secondary:  #111108;
@@ -229,10 +231,46 @@ body {
   letter-spacing: 0.04em;
 }
 
+/* ─── Admin Nav ──────────────────────────────────────────── */
+#admin-nav {
+  display: flex;
+  gap: 4px;
+}
+
+#admin-nav.hidden {
+  display: none;
+}
+
+.nav-btn {
+  background: transparent;
+  border: 1px solid var(--border-stone);
+  color: var(--text-dim);
+  font-family: var(--font-gothic);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  cursor: pointer;
+  border-radius: 1px;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.nav-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--border-gold);
+}
+
+.nav-btn.active {
+  background: #2a1e08;
+  border-color: var(--border-gold);
+  color: var(--text-gold);
+}
+
 /* ─── Header User Status ──────────────────────────────────── */
 #header-top {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 8px;
 }
 
@@ -797,14 +835,12 @@ body {
 }
 
 /* ─── Admin Feedback Panel ────────────────────────────────── */
-#admin-panel {
-  max-width: 1200px;
-  margin: 32px auto 0;
-  padding: 0 16px 48px;
+#view-feedback.hidden {
+  display: none;
 }
 
-#admin-panel.hidden {
-  display: none;
+#admin-panel {
+  margin-top: 8px;
 }
 
 #admin-feedback-list {

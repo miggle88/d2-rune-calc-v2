@@ -102,12 +102,12 @@ function initAuth() {
       renderRuneGrid();
       renderRunewordsPanel();
       renderUpgradesPanel();
-      if (session.user.email === ADMIN_EMAIL) loadAdminFeedback();
+      if (session.user.email === ADMIN_EMAIL) showAdminNav();
     } else {
       overlay.classList.remove('hidden');
       userEmailEl.textContent = '';
       passEl.value = '';
-      document.getElementById('admin-panel').classList.add('hidden');
+      hideAdminNav();
       for (const id of Object.keys(inventory)) inventory[id] = 0;
       renderRuneGrid();
       renderRunewordsPanel();
@@ -431,9 +431,44 @@ function initSlotFilter() {
   });
 }
 
-// ─── Feedback ─────────────────────────────────────────────────────────────────
+// ─── Admin Nav / View Switching ───────────────────────────────────────────────
 
 const ADMIN_EMAIL = 'mtr293@gmail.com';
+
+function initAdminNav() {
+  const nav  = document.getElementById('admin-nav');
+  const btns = nav.querySelectorAll('.nav-btn');
+  const headerTitle = document.querySelector('#main-header h1');
+  const headerSubtitle = document.querySelector('#main-header .subtitle');
+
+  btns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      btns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const view = btn.dataset.view;
+      const isStash = view === 'stash';
+      document.getElementById('view-stash').classList.toggle('hidden', !isStash);
+      document.getElementById('view-feedback').classList.toggle('hidden', isStash);
+      headerTitle.classList.toggle('hidden', !isStash);
+      headerSubtitle.classList.toggle('hidden', !isStash);
+      if (!isStash) loadAdminFeedback();
+    });
+  });
+}
+
+function showAdminNav() {
+  document.getElementById('admin-nav').classList.remove('hidden');
+}
+
+function hideAdminNav() {
+  const nav = document.getElementById('admin-nav');
+  nav.classList.add('hidden');
+  nav.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.view === 'stash'));
+  document.getElementById('view-stash').classList.remove('hidden');
+  document.getElementById('view-feedback').classList.add('hidden');
+}
+
+// ─── Feedback ─────────────────────────────────────────────────────────────────
 
 function initFeedback() {
   const feedbackBtn    = document.getElementById('feedback-btn');
@@ -529,6 +564,7 @@ async function loadAdminFeedback() {
 
 document.addEventListener('DOMContentLoaded', () => {
   initAuth();
+  initAdminNav();
   initFeedback();
   renderRuneGrid();
   renderRunewordsPanel();

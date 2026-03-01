@@ -199,7 +199,11 @@ function renderRunewordsPanel() {
   }));
 
   const order = { 'can-make': 0, 'close': 1, 'cannot-make': 2 };
-  withStatus.sort((a, b) => order[a.status] - order[b.status]);
+  withStatus.sort((a, b) => {
+    const statusDiff = order[a.status] - order[b.status];
+    if (statusDiff !== 0) return statusDiff;
+    return a.rw.name.localeCompare(b.rw.name);
+  });
 
   const filtered = activeFilter === 'all'
     ? withStatus

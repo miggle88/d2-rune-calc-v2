@@ -94,16 +94,20 @@ function initAuth() {
       overlay.classList.add('hidden');
       userEmailEl.textContent = session.user.email;
       showLoading();
-      const loadStart = Date.now();
-      await loadInventory(session.user.id);
-      const elapsed = Date.now() - loadStart;
-      if (elapsed < 500) await new Promise(r => setTimeout(r, 500 - elapsed));
-      hideLoading();
+      try {
+        const loadStart = Date.now();
+        await loadInventory(session.user.id);
+        const elapsed = Date.now() - loadStart;
+        if (elapsed < 500) await new Promise(r => setTimeout(r, 500 - elapsed));
+      } finally {
+        hideLoading();
+      }
       renderRuneGrid();
       renderRunewordsPanel();
       renderUpgradesPanel();
       if (session.user.email === ADMIN_EMAIL) showAdminNav();
     } else {
+      hideLoading();
       overlay.classList.remove('hidden');
       userEmailEl.textContent = '';
       passEl.value = '';
@@ -559,7 +563,10 @@ function renderAdminFeedback() {
     card.innerHTML = `
       <div class="admin-feedback-meta">
         <span>${item.user_email} &mdash; ${date} &mdash; <span class="admin-feedback-category">${item.category}</span></span>
-        <select class="feedback-status-select status-${item.status}" data-id="${item.id}">${statusOptions}</select>
+        <div class="admin-feedback-actions">
+          <select class="feedback-status-select status-${item.status}" data-id="${item.id}">${statusOptions}</select>
+          <button class="feedback-remove-btn" data-id="${item.id}">Remove</button>
+        </div>
       </div>
       <div class="admin-feedback-msg">${item.message}</div>
     `;
@@ -574,6 +581,11 @@ function renderAdminFeedback() {
       if (error) console.error('Status update failed:', error.message);
       item.status = newStatus;
     });
+
+    card.querySelector('.feedback-remove-btn').addEventListener('click', () => {
+      showConfirmDelete(item.id);
+    });
+
     list.appendChild(card);
   }
 }
@@ -607,6 +619,48 @@ async function loadAdminFeedback() {
   renderAdminFeedback();
 }
 
+// ─── Confirm Delete ───────────────────────────────────────────────────────────
+
+let pendingDeleteId = null;
+
+function showConfirmDelete(id) {
+  pendingDeleteId = id;
+  document.getElementById('confirm-delete-overlay').classList.remove('hidden');
+}
+
+function initConfirmDelete() {
+  const overlay   = document.getElementById('confirm-delete-overlay');
+  const cancelBtn = document.getElementById('confirm-delete-cancel');
+  const okBtn     = document.getElementById('confirm-delete-ok');
+
+  cancelBtn.addEventListener('click', () => {
+    overlay.classList.add('hidden');
+    pendingDeleteId = null;
+  });
+
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) {
+      overlay.classList.add('hidden');
+      pendingDeleteId = null;
+    }
+  });
+
+  okBtn.addEventListener('click', async () => {
+    if (!pendingDeleteId) return;
+    okBtn.disabled = true;
+    const { error } = await sb.from('feedback').delete().eq('id', pendingDeleteId);
+    okBtn.disabled = false;
+    if (error) {
+      console.error('Delete failed:', error.message);
+    } else {
+      adminFeedbackData = adminFeedbackData.filter(i => i.id !== pendingDeleteId);
+      renderAdminFeedback();
+    }
+    overlay.classList.add('hidden');
+    pendingDeleteId = null;
+  });
+}
+
 // ─── Init ─────────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -614,6 +668,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initAdminNav();
   initAdminFilters();
   initFeedback();
+  initConfirmDelete();
   renderRuneGrid();
   renderRunewordsPanel();
   renderUpgradesPanel();

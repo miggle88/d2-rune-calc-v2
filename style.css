@@ -904,6 +904,33 @@ body {
   gap: 12px;
 }
 
+.admin-feedback-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.feedback-remove-btn {
+  background: transparent;
+  border: 1px solid #5a2020;
+  color: #884444;
+  font-family: var(--font-gothic);
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  cursor: pointer;
+  border-radius: 1px;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.feedback-remove-btn:hover {
+  color: #cc5555;
+  border-color: #884444;
+  background: rgba(136, 68, 68, 0.1);
+}
+
 .feedback-status-select {
   background: #1a1408;
   border: 1px solid var(--border-stone);
@@ -940,6 +967,95 @@ body {
 .admin-empty {
   font-size: 0.75rem;
   color: var(--text-dim);
+}
+
+/* ─── Confirm Delete Modal ───────────────────────────────── */
+#confirm-delete-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+#confirm-delete-overlay.hidden {
+  display: none;
+}
+
+#confirm-delete-box {
+  background: #111008;
+  border: 1px solid #5a2020;
+  box-shadow: 0 0 30px rgba(136, 68, 68, 0.15);
+  padding: 28px;
+  width: 100%;
+  max-width: 360px;
+}
+
+.confirm-delete-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #884444;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.confirm-delete-msg {
+  font-size: 0.75rem;
+  color: var(--text-primary);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.confirm-delete-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+#confirm-delete-cancel {
+  background: transparent;
+  border: 1px solid var(--border-stone);
+  color: var(--text-dim);
+  font-family: var(--font-gothic);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 7px 14px;
+  cursor: pointer;
+  border-radius: 1px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+#confirm-delete-cancel:hover {
+  color: var(--text-primary);
+  border-color: var(--text-dim);
+}
+
+#confirm-delete-ok {
+  background: #3a1010;
+  border: 1px solid #884444;
+  color: #cc5555;
+  font-family: var(--font-gothic);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 7px 14px;
+  cursor: pointer;
+  border-radius: 1px;
+  transition: background 0.15s, box-shadow 0.15s;
+}
+
+#confirm-delete-ok:hover {
+  background: #4a1818;
+  box-shadow: 0 0 8px rgba(136, 68, 68, 0.3);
+}
+
+#confirm-delete-ok:disabled {
+  opacity: 0.5;
+  cursor: default;
 }
 
 /* ─── Save Toast ─────────────────────────────────────────── */

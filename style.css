@@ -890,11 +890,37 @@ body {
 }
 
 .admin-feedback-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   font-size: 0.65rem;
   color: var(--text-dim);
   letter-spacing: 0.05em;
   margin-bottom: 6px;
+  gap: 12px;
 }
+
+.feedback-status-select {
+  background: #1a1408;
+  border: 1px solid var(--border-stone);
+  font-family: var(--font-gothic);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  border-radius: 1px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.feedback-status-select option {
+  background: #1a1408;
+}
+
+.feedback-status-select.status-open        { color: var(--text-dim);  border-color: var(--border-stone); }
+.feedback-status-select.status-in-progress { color: #c8961e;           border-color: #6b5014; }
+.feedback-status-select.status-completed   { color: #5a9a5a;           border-color: #1f6b1f; }
+.feedback-status-select.status-canceled    { color: #884444;           border-color: #5a2020; }
 
 .admin-feedback-msg {
   font-size: 0.82rem;

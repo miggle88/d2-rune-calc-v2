@@ -551,10 +551,29 @@ function renderAdminFeedback() {
     const date = new Date(item.created_at).toLocaleString();
     const card = document.createElement('div');
     card.className = 'admin-feedback-card';
+    const statuses = ['open', 'in-progress', 'completed', 'canceled'];
+    const statusOptions = statuses.map(s =>
+      `<option value="${s}" ${item.status === s ? 'selected' : ''}>${s}</option>`
+    ).join('');
+
     card.innerHTML = `
-      <div class="admin-feedback-meta">${item.user_email} &mdash; ${date} &mdash; <span class="admin-feedback-category">${item.category}</span></div>
+      <div class="admin-feedback-meta">
+        <span>${item.user_email} &mdash; ${date} &mdash; <span class="admin-feedback-category">${item.category}</span></span>
+        <select class="feedback-status-select status-${item.status}" data-id="${item.id}">${statusOptions}</select>
+      </div>
       <div class="admin-feedback-msg">${item.message}</div>
     `;
+
+    card.querySelector('.feedback-status-select').addEventListener('change', async (e) => {
+      const select = e.target;
+      const newStatus = select.value;
+      select.className = `feedback-status-select status-${newStatus}`;
+      const { error } = await sb.from('feedback')
+        .update({ status: newStatus })
+        .eq('id', select.dataset.id);
+      if (error) console.error('Status update failed:', error.message);
+      item.status = newStatus;
+    });
     list.appendChild(card);
   }
 }

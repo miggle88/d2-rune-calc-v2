@@ -198,16 +198,18 @@ function renderRunewordsPanel() {
     status: calculateRunewordStatus(rw),
   }));
 
-  const order = { 'can-make': 0, 'close': 1, 'cannot-make': 2 };
-  withStatus.sort((a, b) => {
+  const visible = withStatus.filter(({ status }) => status !== 'cannot-make');
+
+  const order = { 'can-make': 0, 'close': 1 };
+  visible.sort((a, b) => {
     const statusDiff = order[a.status] - order[b.status];
     if (statusDiff !== 0) return statusDiff;
     return a.rw.name.localeCompare(b.rw.name);
   });
 
   const filtered = activeFilter === 'all'
-    ? withStatus
-    : withStatus.filter(({ status }) => status === activeFilter);
+    ? visible
+    : visible.filter(({ status }) => status === activeFilter);
 
   container.innerHTML = '';
 

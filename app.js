@@ -175,21 +175,22 @@ let saveDebounceTimer = null;
 // ─── Inventory Persistence ────────────────────────────────────────────────────
 
 async function saveInventory() {
-  const { data: { user } } = await sb.auth.getUser();
-  if (!user) return;
-  await sb.from('rune_stash').upsert({
-    user_id: user.id,
-    inventory: { ...inventory },
-    updated_at: new Date().toISOString(),
-  });
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session?.user) return;
+  const { error } = await sb.from('rune_stash').upsert(
+    { user_id: session.user.id, inventory: { ...inventory }, updated_at: new Date().toISOString() },
+    { onConflict: 'user_id' }
+  );
+  if (error) console.error('Save failed:', error.message);
 }
 
 async function loadInventory(userId) {
   for (const id of Object.keys(inventory)) inventory[id] = 0;
-  const { data } = await sb.from('rune_stash')
+  const { data, error } = await sb.from('rune_stash')
     .select('inventory')
     .eq('user_id', userId)
     .single();
+  if (error && error.code !== 'PGRST116') console.error('Load failed:', error.message);
   if (data?.inventory) {
     for (const id of Object.keys(inventory)) {
       if (typeof data.inventory[id] === 'number') inventory[id] = data.inventory[id];

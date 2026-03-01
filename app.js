@@ -102,10 +102,12 @@ function initAuth() {
       renderRuneGrid();
       renderRunewordsPanel();
       renderUpgradesPanel();
+      if (session.user.email === ADMIN_EMAIL) loadAdminFeedback();
     } else {
       overlay.classList.remove('hidden');
       userEmailEl.textContent = '';
       passEl.value = '';
+      document.getElementById('admin-panel').classList.add('hidden');
       for (const id of Object.keys(inventory)) inventory[id] = 0;
       renderRuneGrid();
       renderRunewordsPanel();
@@ -429,10 +431,105 @@ function initSlotFilter() {
   });
 }
 
+// ─── Feedback ─────────────────────────────────────────────────────────────────
+
+const ADMIN_EMAIL = 'mtr293@gmail.com';
+
+function initFeedback() {
+  const feedbackBtn    = document.getElementById('feedback-btn');
+  const overlay        = document.getElementById('feedback-overlay');
+  const form           = document.getElementById('feedback-form');
+  const messageEl      = document.getElementById('feedback-message');
+  const cancelBtn      = document.getElementById('feedback-cancel');
+  const submitBtn      = document.getElementById('feedback-submit');
+  const errorEl        = document.getElementById('feedback-error');
+
+  feedbackBtn.addEventListener('click', () => {
+    overlay.classList.remove('hidden');
+    messageEl.focus();
+  });
+
+  cancelBtn.addEventListener('click', () => {
+    overlay.classList.add('hidden');
+    messageEl.value = '';
+    errorEl.textContent = '';
+  });
+
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) {
+      overlay.classList.add('hidden');
+      messageEl.value = '';
+      errorEl.textContent = '';
+    }
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    submitBtn.disabled = true;
+    errorEl.textContent = '';
+
+    const { data: { session } } = await sb.auth.getSession();
+    const category = document.getElementById('feedback-category').value;
+    const { error } = await sb.from('feedback').insert({
+      user_id:    session?.user?.id ?? null,
+      user_email: session?.user?.email ?? 'anonymous',
+      category,
+      message:    messageEl.value.trim(),
+    });
+
+    submitBtn.disabled = false;
+    if (error) {
+      errorEl.textContent = 'Failed to send. Please try again.';
+      console.error('Feedback error:', error.message);
+    } else {
+      overlay.classList.add('hidden');
+      messageEl.value = '';
+      const toast = document.getElementById('save-toast');
+      const orig = toast.textContent;
+      toast.textContent = 'Feedback Sent!';
+      toast.classList.add('visible');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.remove('visible');
+        toast.textContent = orig;
+      }, 2000);
+    }
+  });
+}
+
+async function loadAdminFeedback() {
+  const panel = document.getElementById('admin-panel');
+  const list  = document.getElementById('admin-feedback-list');
+
+  const { data, error } = await sb.from('feedback')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error || !data?.length) {
+    list.innerHTML = '<p class="admin-empty">No feedback yet.</p>';
+    panel.classList.remove('hidden');
+    return;
+  }
+
+  list.innerHTML = '';
+  for (const item of data) {
+    const date = new Date(item.created_at).toLocaleString();
+    const card = document.createElement('div');
+    card.className = 'admin-feedback-card';
+    card.innerHTML = `
+      <div class="admin-feedback-meta">${item.user_email} &mdash; ${date} &mdash; <span class="admin-feedback-category">${item.category}</span></div>
+      <div class="admin-feedback-msg">${item.message}</div>
+    `;
+    list.appendChild(card);
+  }
+  panel.classList.remove('hidden');
+}
+
 // ─── Init ─────────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
   initAuth();
+  initFeedback();
   renderRuneGrid();
   renderRunewordsPanel();
   renderUpgradesPanel();

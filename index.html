@@ -42,6 +42,7 @@
       <div id="header-top">
         <div id="user-status">
           <span id="user-email"></span>
+          <button id="feedback-btn">Feedback</button>
           <button id="logout-btn">Logout</button>
         </div>
       </div>
@@ -78,6 +79,31 @@
     </div>
   </div>
   <div id="save-toast">Stash Saved</div>
+
+  <!-- Feedback Modal -->
+  <div id="feedback-overlay" class="hidden">
+    <div id="feedback-box">
+      <h2 class="feedback-title">Send Feedback</h2>
+      <form id="feedback-form">
+        <select id="feedback-category">
+          <option value="Bug Report">Bug Report</option>
+          <option value="Feature Request">Feature Request</option>
+        </select>
+        <textarea id="feedback-message" placeholder="What's on your mind?" rows="5" required></textarea>
+        <div id="feedback-actions">
+          <button type="button" id="feedback-cancel">Cancel</button>
+          <button type="submit" id="feedback-submit">Send</button>
+        </div>
+      </form>
+      <p id="feedback-error"></p>
+    </div>
+  </div>
+
+  <!-- Admin Feedback Panel -->
+  <div id="admin-panel" class="hidden">
+    <h2 class="section-title">Feedback Inbox</h2>
+    <div id="admin-feedback-list"></div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="app.js"></script>

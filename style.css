@@ -57,6 +57,46 @@ body {
   margin-top: 6px;
 }
 
+/* ─── Loading Overlay ────────────────────────────────────── */
+#loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+#loading-overlay.hidden {
+  display: none;
+}
+
+#loading-box {
+  text-align: center;
+}
+
+#loading-glyph {
+  font-size: 3rem;
+  color: var(--text-gold);
+  text-shadow: 0 0 20px rgba(200, 150, 30, 0.8);
+  animation: runespin 2s ease-in-out infinite;
+}
+
+#loading-text {
+  margin-top: 16px;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+@keyframes runespin {
+  0%   { opacity: 0.3; transform: scale(0.9); }
+  50%  { opacity: 1;   transform: scale(1.1); }
+  100% { opacity: 0.3; transform: scale(0.9); }
+}
+
 /* ─── Auth Overlay ───────────────────────────────────────── */
 #auth-overlay {
   position: fixed;
@@ -599,6 +639,33 @@ body {
 
 .upgrade-times.zero {
   color: var(--text-dim);
+}
+
+/* ─── Save Toast ─────────────────────────────────────────── */
+#save-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: #0d1f0d;
+  border: 1px solid #1f6b1f;
+  box-shadow: 0 0 12px rgba(0, 180, 0, 0.3);
+  color: #5a9a5a;
+  font-family: var(--font-gothic);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 10px 18px;
+  border-radius: 1px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+  z-index: 3000;
+}
+
+#save-toast.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* ─── Responsive ──────────────────────────────────────────── */

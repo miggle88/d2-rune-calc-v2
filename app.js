@@ -13,6 +13,24 @@ const sb = createClient(
   }
 );
 
+// ─── Loading ──────────────────────────────────────────────────────────────────
+
+let toastTimer = null;
+function showSaveToast() {
+  const toast = document.getElementById('save-toast');
+  toast.classList.add('visible');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('visible'), 2000);
+}
+
+function showLoading() {
+  document.getElementById('loading-overlay').classList.remove('hidden');
+}
+
+function hideLoading() {
+  document.getElementById('loading-overlay').classList.add('hidden');
+}
+
 // ─── Auth UI ──────────────────────────────────────────────────────────────────
 
 function initAuth() {
@@ -75,7 +93,12 @@ function initAuth() {
     if (session?.user) {
       overlay.classList.add('hidden');
       userEmailEl.textContent = session.user.email;
+      showLoading();
+      const loadStart = Date.now();
       await loadInventory(session.user.id);
+      const elapsed = Date.now() - loadStart;
+      if (elapsed < 500) await new Promise(r => setTimeout(r, 500 - elapsed));
+      hideLoading();
       renderRuneGrid();
       renderRunewordsPanel();
       renderUpgradesPanel();
@@ -189,7 +212,7 @@ async function saveInventory() {
     { onConflict: 'user_id' }
   );
   if (error) console.error('[save] failed:', error.message, error);
-  else console.log('[save] success');
+  else showSaveToast();
 }
 
 async function loadInventory(userId) {

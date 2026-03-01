@@ -844,6 +844,10 @@ body {
   margin-top: 8px;
 }
 
+#admin-panel .section-title {
+  text-align: center;
+}
+
 #admin-filters {
   display: flex;
   gap: 6px;

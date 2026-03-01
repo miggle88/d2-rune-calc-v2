@@ -5,7 +5,12 @@
 const { createClient } = window.supabase;
 const sb = createClient(
   'https://piaijwyorebylqvoniyf.supabase.co',
-  'sb_publishable_MuLfZ_LO7426dGi_boqyXQ_D5JJv2B1'
+  'sb_publishable_MuLfZ_LO7426dGi_boqyXQ_D5JJv2B1',
+  {
+    auth: {
+      lock: async (_name, _timeout, fn) => fn(),
+    }
+  }
 );
 
 // ─── Auth UI ──────────────────────────────────────────────────────────────────
@@ -62,7 +67,8 @@ function initAuth() {
   });
 
   logoutBtn.addEventListener('click', async () => {
-    await sb.auth.signOut();
+    const { error } = await sb.auth.signOut();
+    if (error) console.error('Logout error:', error.message);
   });
 
   sb.auth.onAuthStateChange(async (event, session) => {

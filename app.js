@@ -84,6 +84,7 @@ const inventory = {};
 for (const rune of RUNES) inventory[rune.id] = 0;
 
 let activeFilter = 'all';
+let activeSlotFilter = 'all';
 let saveDebounceTimer = null;
 
 // ─── LocalStorage ─────────────────────────────────────────────────────────────
@@ -198,18 +199,16 @@ function renderRunewordsPanel() {
     status: calculateRunewordStatus(rw),
   }));
 
-  const visible = withStatus.filter(({ status }) => status !== 'cannot-make');
-
-  const order = { 'can-make': 0, 'close': 1 };
-  visible.sort((a, b) => {
+  const order = { 'can-make': 0, 'close': 1, 'cannot-make': 2 };
+  withStatus.sort((a, b) => {
     const statusDiff = order[a.status] - order[b.status];
     if (statusDiff !== 0) return statusDiff;
     return a.rw.name.localeCompare(b.rw.name);
   });
 
-  const filtered = activeFilter === 'all'
-    ? visible
-    : visible.filter(({ status }) => status === activeFilter);
+  const filtered = withStatus
+    .filter(({ status }) => activeFilter === 'all' || status === activeFilter)
+    .filter(({ rw }) => activeSlotFilter === 'all' || rw.itemTypes.includes(activeSlotFilter));
 
   container.innerHTML = '';
 
@@ -290,6 +289,23 @@ function initFilters() {
   });
 }
 
+function initSlotFilter() {
+  const select = document.getElementById('slot-filter');
+
+  const slotTypes = [...new Set(RUNEWORDS.flatMap(rw => rw.itemTypes))].sort();
+  for (const slot of slotTypes) {
+    const opt = document.createElement('option');
+    opt.value = slot;
+    opt.textContent = slot;
+    select.appendChild(opt);
+  }
+
+  select.addEventListener('change', () => {
+    activeSlotFilter = select.value;
+    renderRunewordsPanel();
+  });
+}
+
 // ─── Init ─────────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -298,4 +314,5 @@ document.addEventListener('DOMContentLoaded', () => {
   renderRunewordsPanel();
   renderUpgradesPanel();
   initFilters();
+  initSlotFilter();
 });

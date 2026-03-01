@@ -187,8 +187,35 @@ body {
 #runeword-filters {
   display: flex;
   gap: 6px;
-  margin-bottom: 14px;
+  margin-bottom: 8px;
   flex-wrap: wrap;
+}
+
+#slot-filter-wrap {
+  margin-bottom: 14px;
+}
+
+#slot-filter {
+  background: #1a1208;
+  border: 1px solid var(--border-stone);
+  color: var(--text-primary);
+  font-family: var(--font-gothic);
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  padding: 5px 8px;
+  cursor: pointer;
+  border-radius: 1px;
+  outline: none;
+  width: 100%;
+}
+
+#slot-filter:focus {
+  border-color: var(--border-gold);
+}
+
+#slot-filter option {
+  background: #1a1208;
+  color: var(--text-primary);
 }
 
 .filter-btn {
